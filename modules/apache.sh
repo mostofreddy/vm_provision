@@ -7,6 +7,9 @@ echo "#----------------------------------------------------------------------#"
 APACHE_VERSION="2.2.29"
 APACHE_URL="http://apache.xfree.com.ar/httpd/httpd-"${APACHE_VERSION}".tar.gz"
 
+# apache deps
+sudo yum install -y openssl-devel zlib-devel
+
 wget ${APACHE_URL}
 tar -zxvf httpd-${APACHE_VERSION}.tar.gz
 
@@ -24,10 +27,10 @@ make
 
 sudo make install
 
-sudo cp /vagrant/bootstrap/modules/conf/httpd.conf /usr/local/apache2/conf/httpd.conf
+sudo cp /vagrant/bootstrap/modules/conf/apache_httpd.conf /usr/local/apache2/conf/httpd.conf
 
 if [ ! -f "/etc/init.d/httpd" ]; then
-    sudo cp /vagrant/bootstrap/modules/conf/initd_apache /etc/init.d/httpd
+    sudo cp /vagrant/bootstrap/modules/conf/apache_initd /etc/init.d/httpd
     sudo chmod 755 /etc/init.d/httpd
     sudo chkconfig httpd on
 fi
