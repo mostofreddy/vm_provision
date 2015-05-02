@@ -10,3 +10,9 @@ echo "#----------------------------------------------------------------------#"
 
 # Iptables
 . /vagrant/bootstrap/modules/iptables_disabled.sh
+
+# Apache
+. /vagrant/bootstrap/modules/apache.sh
+
+# Iptables
+. /vagrant/bootstrap/modules/php56x.sh
