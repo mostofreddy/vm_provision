@@ -1,0 +1,83 @@
+#!/bin/bash
+# init script for apache2
+# chkconfig: 2345 70 11
+# description: apache2
+# processname: apache2
+# pidfile: /var/run/apache2.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PATH=$PATH:/usr/local/bin
+lockfile=/var/lock/subsys/apache2
+pidfile=/var/run/apache2.pid
+prog=apache2
+apachectl=/usr/local/apache2/bin/apachectl
+httpd=/usr/local/apache2/bin/httpd
+RETVAL=0
+
+start () {
+
+  echo -n $"Starting $prog: "
+  daemon $apachectl start
+  RETVAL=$?
+  echo
+  [ $RETVAL = 0 ] && touch ${lockfile}
+
+  return $RETVAL
+}
+
+stop () {
+  echo -n $"Stopping $prog: "
+  $apachectl stop
+  RETVAL=$?
+  echo
+  [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+  return $RETVAL
+}
+
+reload() {
+  echo -n $"Reloading $prog: "
+  $apachectl reload
+  RETVAL=$?
+  echo
+  return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status $httpd
+        RETVAL=$?
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  condrestart)
+        if [ -f $pid ] ; then
+                stop
+                start
+        fi
+        ;;
+  reload)
+        reload
+        ;;
+
+  graceful|help|configtest|fullstatus)
+        $apachectl $@
+        RETVAL=$?
+        ;;
+  *)
+        echo $"Usage: $prog {start|stop|restart|condrestart|reload|status"
+        echo $"|fullstatus|graceful|help|configtest}"
+        exit 1
+esac
+
+exit $RETVAL
