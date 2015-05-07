@@ -1,0 +1,81 @@
+#!/bin/bash
+# init script for memcached
+# chkconfig: 2345 70 11
+# description: memcached
+# processname: memcached
+# pidfile: /var/run/memcached.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PATH=$PATH:/usr/local/bin
+lockfile=/var/lock/subsys/memcached
+logfile=/var/log/memcached
+pidfile=/var/run/memcached.pid
+prog=memcached
+memcached=/usr/local/bin/memcached
+memcached_conf=/etc/memcached.conf
+RETVAL=0
+
+
+# find IP address on specific subnet
+# ipaddr=`ifconfig | grep "10\.0\.3"  | awk '{print $2}' | cut -d : -f 2`
+opts=$(cat ${memcached_conf} | egrep -v '^(#|$)' | egrep -v 'logfile' | tr '\n' ' ')
+logfile=$(cat ${memcached_conf} | egrep -v '^(#|$)' | egrep 'logfile' | sed 's/logfile\ //g')
+
+start () {
+
+  # quit if IP address doesn't exist
+  #if [[ -z $ipaddr ]];then
+  #  echo "IP address not found. please fix. exiting."
+  #  exit 1
+  #fi
+
+  echo -n $"Starting $prog: "
+  daemon $memcached $opts >> ${logfile} 2>&1
+  RETVAL=$?
+  echo
+  [ $RETVAL = 0 ] && touch ${lockfile}
+  
+  return $RETVAL
+}
+
+stop () {
+  echo -n $"Stopping $prog: "
+  killproc ${prog}
+  RETVAL=$?
+  echo
+  [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+}
+
+status () {
+  psline1=`ps auxwww|grep -P "^${user}"|grep -v grep`
+  psline2=`ps auxwww|grep -P "${prog}"|grep -v grep`
+  if [[ -z $psline2 ]];then
+    echo "${prog} is not running"
+  else
+    echo "$psline1
+    $psline2"
+  fi
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  restart)
+    stop
+    sleep 1
+    start
+    ;;
+  *)
+    echo $"Usage: `basename $0` {start|stop|restart|status}"
+    exit 2
+esac

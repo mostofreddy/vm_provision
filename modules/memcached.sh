@@ -25,12 +25,12 @@ fi
 
 # mmc conf
 if [ ! -f "/etc/memcached.conf" ]; then
-    sudo cp /vagrant/bootstrap/conf/memcached.conf /etc/memcached.conf
+    sudo cp /vagrant/bootstrap/modules/conf/memcached.conf /etc/memcached.conf
 fi
 
 # mmc init.d
 if [ ! -f "/etc/init.d/memcached" ]; then
-    sudo cp /vagrant/bootstrap/conf/initd_memcached /etc/init.d/memcached
+    sudo cp /vagrant/bootstrap/modules/conf/initd_memcached /etc/init.d/memcached
     sudo chmod 755 /etc/init.d/memcached
     sudo chkconfig memcached on
 fi
