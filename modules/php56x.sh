@@ -125,3 +125,10 @@ sudo ln -s /usr/local/php/php/modules/libphp5.so /usr/local/apache2/modules/
 
 sudo ln -s /usr/local/php/php/bin/* /usr/bin/
 
+sudo sed -i 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Argentina\/Buenos\_Aires/g' /usr/local/php/php/lib/php.ini
+
+sudo sed -i 's/\;error\_log\ \=\ php\_errors\.log/error\_log\ \=\ \/tmp\/php\_errors\.log/g' /usr/local/php/php/lib/php.ini
+
+cd ${VAGRANT_HOME}
+
+rm php-${PHP_VERSION} -Rf
